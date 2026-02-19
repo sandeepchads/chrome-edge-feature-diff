@@ -13139,16 +13139,29 @@ function filterAllTable() {
 function filterByCategory(category, tabId) {
   // Map tabId to the correct panel and filter IDs
   const tabMap = {
-    'chrome-ahead': { cat: 'chrome-cat', fn: filterChromeTable },
-    'edge-ahead':   { cat: 'edge-cat',   fn: filterEdgeTable },
-    'edge-flags':   { cat: 'flags-cat',  fn: filterFlagsTable },
-    'all':          { cat: 'all-cat',    fn: filterAllTable },
+    'chrome-ahead': { cat: 'chrome-cat', search: 'chrome-search', def: 'chrome-default', loc: 'chrome-loc', fn: filterChromeTable },
+    'edge-ahead':   { cat: 'edge-cat',   search: 'edge-search',   def: 'edge-default',   loc: 'edge-loc',   fn: filterEdgeTable },
+    'edge-flags':   { cat: 'flags-cat',  search: 'flags-search',  def: 'flags-default',  loc: null,          fn: filterFlagsTable },
+    'all':          { cat: 'all-cat',    search: 'all-search',    def: 'all-default',    loc: null,          fn: filterAllTable },
   };
   const target = tabMap[tabId];
   if (!target) return;
 
   // Switch to the target tab
   switchTab(tabId);
+
+  // Clear all other filters for a clean view
+  const searchEl = document.getElementById(target.search);
+  if (searchEl) searchEl.value = '';
+  const defEl = document.getElementById(target.def);
+  if (defEl) defEl.value = '';
+  if (target.loc) {
+    const locEl = document.getElementById(target.loc);
+    if (locEl) locEl.value = '';
+  }
+  // Clear direction filter if present (All Features tab)
+  const dirEl = document.getElementById(tabId === 'all' ? 'all-direction' : '');
+  if (dirEl) dirEl.value = '';
 
   // Set the category dropdown and trigger filter
   const select = document.getElementById(target.cat);
